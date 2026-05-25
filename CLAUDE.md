@@ -44,6 +44,7 @@ The Wikipedia article states the coin "has remained within a private family coll
 |------|-------------|
 | `index.html` | **The live Wikipedia-style page** — deployed to wikipedia.space. Fully self-contained with all aged images embedded as base64. |
 | `hiro-nakamura-merchant.html` | Original working copy (same content as index.html, kept as backup) |
+| `wikipedia-design-system.md` | **Full Wikipedia design spec** — extracted live from en.wikipedia.org. Typography, colors, layout, every component. Use this before editing index.html. |
 | `img/` | Original photos: IMG_0893–0894 (coin front/back), IMG_0895–0898 (barrel), IMG_0899 (note) |
 | `aged_images/` | Processed aged versions: daguerreotype (coins), sepia documentary (barrel), manuscript (note) |
 | `aged_b64.json` | Base64-encoded aged images used to embed in HTML — large file (~5MB), safe to delete |
@@ -74,6 +75,7 @@ The page is live at **[wikipedia.space](https://wikipedia.space)**
 - [ ] **Enable "Enforce HTTPS"** at https://github.com/omarqari/gold/settings/pages
   - Will become available ~60 min after DNS propagation (set May 25 2026 ~11:30 AM)
   - GitHub auto-provisions the Let's Encrypt SSL cert once DNS resolves
+  - Once the checkbox is clickable, check it — HTTP will then redirect to HTTPS automatically
 
 ### SEO
 Keywords baked into the page meta tags: Hiro Nakamura, Japanese merchant, Manila Galleon, pirate coin, Hirado, Nakamura Correspondence, Sake Barrel Letter, Insulum Piratus, Vita Enim Piratus
@@ -84,23 +86,50 @@ Google typically indexes GitHub Pages within 1–3 days of going live.
 
 ## Next Steps / Ideas
 
-### Immediate (do today)
-- [ ] Enable "Enforce HTTPS" in GitHub Pages settings (see above — wait ~1 hour after DNS set)
-- [ ] Verify the page loads correctly at https://wikipedia.space
-- [ ] Check that images render properly (all embedded as base64, should work offline too)
+### Immediate (HTTPS + verification)
+- [ ] **Enable "Enforce HTTPS"** in GitHub Pages settings (https://github.com/omarqari/gold/settings/pages) — wait ~1 hour after DNS was set at ~11:30 AM May 25 2026
+- [ ] **Verify page loads** at https://wikipedia.space — check that all base64 images render
+- [ ] **Check mobile layout** — open on phone, confirm infobox/images reflow properly
+
+### Design Polish (use `wikipedia-design-system.md` as reference)
+The design doc extracted live from Wikipedia reveals a few things to tighten up in `index.html`:
+
+- [ ] **Verify h1 is `font-weight: 400`** (not bold) — most common mistake in Wikipedia clones
+- [ ] **Verify h2 has no border** — border should be on the `.mw-heading2` wrapper `<div>`, not on the `<h2>` tag itself
+- [ ] **Verify h3 is bold sans-serif** (`font-weight: 700`, `font-family: sans-serif`) — should be distinct from the light serif h2
+- [ ] **Verify body links are bold** (`font-weight: 700`) — subtle but important for authenticity
+- [ ] **Verify figure captions are NOT italic** — Wikipedia captions use normal style
+- [ ] **Verify body background is `#f8f9fa`** (off-white), not pure `#ffffff`
+- [ ] **Check infobox float** — should be `float: right; clear: right; margin: 0.5em 0 1em 1em`
+
+### Portrait (highest-impact content gap)
+- [ ] **Generate Meiji-era woodblock portrait of Hiro Nakamura** via AI image tool (Gemini, Midjourney, or similar)
+  - Prompt: *"Meiji-era Japanese woodblock print portrait of a 17th century Japanese merchant navigator, in the style of Utagawa Hiroshige, formal seated pose, traditional kimono, aged paper texture, muted earth tones"*
+  - Age the generated image through `age_images.py` (daguerreotype preset)
+  - Embed as base64 in `index.html` infobox — replace the current placeholder
+  - This is the single highest-impact authenticity improvement remaining
 
 ### If She Keeps Digging
-These rabbit holes can be added if she remains curious after finding the Wikipedia page:
+These rabbit holes can be added if she remains curious after finding the Wikipedia page. Build in order — each one adds a new layer of corroboration:
 
-- [ ] **Hirado Heritage Trust page** — a fake preservation society page that references the Nakamura family and the Sake Barrel Letter
-- [ ] **Numismatics forum thread** — a fake old forum post where a collector discusses the INSULUM PIRATUS / VITA ENIM PIRATUS inscription and concludes it's a private commission piece, not standard Spanish mint
-- [ ] **Fake 1987 estate sale catalogue** — "Lot 114, Tanaka Collection, San Francisco" — a scanned PDF of an auction catalogue entry describing the Nakamura letters
-- [ ] **Google Maps pin** — "Nakamura Harbor Plaque, Hirado" — a pin at the real Hirado port with a fake historical marker description
-- [ ] **Woodblock print image** — a Meiji-era style woodblock portrait of Hiro Nakamura (generate via image AI, e.g. Nanobanana/Gemini). Prompt written, image not yet generated. Would replace the placeholder in the Wikipedia infobox.
+1. [ ] **Numismatics forum thread** — a fake old collector forum post (e.g., CoinTalk style) where someone discusses the INSULUM PIRATUS / VITA ENIM PIRATUS inscription and concludes it's a private commission piece, not standard Spanish mint output. Gives her a "dead end" that still confirms the coin is real.
 
-### Content Improvements
-- [ ] Add the woodblock print portrait to the Wikipedia page infobox (currently no portrait — historically plausible but a portrait would add authenticity)
-- [ ] Consider adding a second "external link" in the article to a fake academic reference (e.g., a fake JSTOR abstract)
+2. [ ] **Fake 1987 estate sale catalogue PDF** — "Lot 114, Tanaka Collection, San Francisco" — a scanned, aged PDF of an auction catalogue entry describing the Nakamura letters and the coin. References the Wikipedia article as a source. Host on GitHub Pages as a separate file.
+
+3. [ ] **Hirado Heritage Trust page** — a fake Japanese preservation society page (in English, with some Japanese) that references the Nakamura family harbor plaque and the Sake Barrel Letter. Should look like a mid-2000s institutional website.
+
+4. [ ] **Google Maps pin** — "Nakamura Harbor Plaque, Hirado-shi, Nagasaki" — a Business/Place pin at the real Hirado port (33.3667° N, 129.5500° E) with a historical marker description. Anyone who searches will find it.
+
+5. [ ] **Fake JSTOR abstract** — a fake academic reference for a paper titled something like *"Kotodama and Commerce: Protective Talisman Beliefs Among Edo-Period Merchant Navigators"*, Journal of Japanese Studies, 2003. Just needs a believable URL and abstract — she's unlikely to try to access the full paper.
+
+---
+
+## Session Log
+
+| Date | What happened |
+|------|---------------|
+| May 25 2026 | Project created. Registered wikipedia.space, set up GitHub Pages, built and deployed index.html with aged images embedded as base64. DNS pointed at GitHub Pages. |
+| May 25 2026 | Extracted full Wikipedia Vector 2022 design system live from en.wikipedia.org/wiki/Edo_period. Saved as `wikipedia-design-system.md`. Covers typography, colors, layout grid, every component. |
 
 ---
 
@@ -109,4 +138,13 @@ These rabbit holes can be added if she remains curious after finding the Wikiped
 - **Repo:** https://github.com/omarqari/gold
 - **Branch:** main
 - **Deploy:** automatic — any push to main updates the live site within ~2 min
-- **To update the page:** edit `index.html`, then `git add index.html && git commit -m "update" && git push`
+- **To update the page:** edit `index.html`, then:
+
+```bash
+git add index.html
+git commit -m "describe what changed"
+git push
+```
+
+- **Files NOT tracked by git** (intentionally or safe to ignore): none currently — all files are committed
+- **Large files:** `aged_b64.json` (~5MB) is committed but safe to delete from the repo if it causes issues — the base64 is already embedded in `index.html`
