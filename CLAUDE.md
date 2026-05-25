@@ -42,13 +42,18 @@ The Wikipedia article states the coin "has remained within a private family coll
 
 | File | Description |
 |------|-------------|
-| `index.html` | **The live Wikipedia-style page** — deployed to wikipedia.space. Fully self-contained with all aged images embedded as base64. |
-| `hiro-nakamura-merchant.html` | Original working copy (same content as index.html, kept as backup) |
+| `index.html` | **The live Wikipedia-style page** — deployed to wikipedia.space. Vector 2022 fidelity rebuild (May 25 2026). References JPGs in `assets/`. |
+| `index-v1.html` | First version of the page — hand-rolled Wikipedia approximation with base64-embedded aged images. Kept as backup. |
+| `hiro-nakamura-merchant.html` | Original working copy from the very first build (May 25 2026). Backup. |
 | `wikipedia-design-system.md` | **Full Wikipedia design spec** — extracted live from en.wikipedia.org. Typography, colors, layout, every component. Use this before editing index.html. |
-| `img/` | Original photos: IMG_0893–0894 (coin front/back), IMG_0895–0898 (barrel), IMG_0899 (note) |
-| `aged_images/` | Processed aged versions: daguerreotype (coins), sepia documentary (barrel), manuscript (note) |
-| `aged_b64.json` | Base64-encoded aged images used to embed in HTML — large file (~5MB), safe to delete |
-| `age_images.py` | The PIL-based aging pipeline script; rerun if you add more photos |
+| `assets/` | Final web-ready images used by `index.html`: cropped JPGs (~85–200KB each) plus `wikipedia-logo.svg` (the real Wikipedia 25-year wordmark). |
+| `rev_images/` | Source images (large PNGs, ~8–10MB each) from which `assets/` was derived. Originals — do not edit. |
+| `img/` | Original phone photos: IMG_0893–0894 (coin front/back), IMG_0895–0898 (barrel), IMG_0899 (note). |
+| `aged_images/` | Daguerreotype / sepia / manuscript treatments of `img/`. Used by `index-v1.html`. Not used by current `index.html`. |
+| `aged_b64.json` | Base64-encoded aged images embedded in `index-v1.html`. Large file (~5MB), `.gitignore`'d. Safe to delete. |
+| `age_images.py` | PIL-based aging pipeline. Rerun if you add more photos. |
+| `age_images.py` | The aging pipeline script (PIL-based); rerun if you add more photos |
+| `CNAME` | `wikipedia.space` — tells GitHub Pages the custom domain. |
 | `CLAUDE.md` | This file |
 
 ---
@@ -86,28 +91,22 @@ Google typically indexes GitHub Pages within 1–3 days of going live.
 
 ## Next Steps / Ideas
 
-### Immediate (HTTPS + verification)
-- [ ] **Enable "Enforce HTTPS"** in GitHub Pages settings (https://github.com/omarqari/gold/settings/pages) — wait ~1 hour after DNS was set at ~11:30 AM May 25 2026
-- [ ] **Verify page loads** at https://wikipedia.space — check that all base64 images render
-- [ ] **Check mobile layout** — open on phone, confirm infobox/images reflow properly
+### Immediate — deploy rev 2
+- [ ] Copy the new files from this session into the local repo and push (see commit instructions below).
+- [ ] **Enable "Enforce HTTPS"** at https://github.com/omarqari/gold/settings/pages if not already on. The checkbox becomes available ~1 hour after DNS is set.
+- [ ] Open https://wikipedia.space on phone and desktop to confirm the rebuild renders, all `assets/` images load, and the page still beats the Google rank for "Hiro Nakamura merchant".
 
-### Design Polish (use `wikipedia-design-system.md` as reference)
-The design doc extracted live from Wikipedia reveals a few things to tighten up in `index.html`:
+### Design polish that could still be tightened
+The Vector 2022 rebuild is close but a real-Wikipedia-vs-ours diff still shows a few residual gaps:
 
-- [ ] **Verify h1 is `font-weight: 400`** (not bold) — most common mistake in Wikipedia clones
-- [ ] **Verify h2 has no border** — border should be on the `.mw-heading2` wrapper `<div>`, not on the `<h2>` tag itself
-- [ ] **Verify h3 is bold sans-serif** (`font-weight: 700`, `font-family: sans-serif`) — should be distinct from the light serif h2
-- [ ] **Verify body links are bold** (`font-weight: 700`) — subtle but important for authenticity
-- [ ] **Verify figure captions are NOT italic** — Wikipedia captions use normal style
-- [ ] **Verify body background is `#f8f9fa`** (off-white), not pure `#ffffff`
-- [ ] **Check infobox float** — should be `float: right; clear: right; margin: 0.5em 0 1em 1em`
+- [ ] **Sticky TOC scroll-spy.** Real Wikipedia highlights the currently-visible section in the TOC as you scroll. Currently the TOC is decorative.
+- [ ] **Disclosure-caret toggling.** The little ▾ on parent TOC items is visual-only; clicking it does nothing. Wiring up `aria-expanded` toggling would take ~10 lines of JS.
+- [ ] **The "3 languages" pill** in the title bar is static. Could open a dropdown.
+- [ ] **Visited-link purple** (`#6b4ba1`) is set in CSS but only fires for real `:visited` links — not for `href="#"` hash links. Some article links should point to real Wikipedia articles so the visited state actually triggers.
+- [ ] **Mobile layout.** The breakpoints at 1280px and 900px work but haven't been tested rigorously on phone. Most of her use will likely be on desktop, but worth a quick pass.
 
-### Portrait (highest-impact content gap)
-- [ ] **Generate Meiji-era woodblock portrait of Hiro Nakamura** via AI image tool (Gemini, Midjourney, or similar)
-  - Prompt: *"Meiji-era Japanese woodblock print portrait of a 17th century Japanese merchant navigator, in the style of Utagawa Hiroshige, formal seated pose, traditional kimono, aged paper texture, muted earth tones"*
-  - Age the generated image through `age_images.py` (daguerreotype preset)
-  - Embed as base64 in `index.html` infobox — replace the current placeholder
-  - This is the single highest-impact authenticity improvement remaining
+### Portrait
+- [x] ~~Generate Meiji-era woodblock portrait of Hiro Nakamura~~ — done; `assets/hiro-portrait.jpg` is in the infobox.
 
 ### If She Keeps Digging
 These rabbit holes can be added if she remains curious after finding the Wikipedia page. Build in order — each one adds a new layer of corroboration:
@@ -122,6 +121,8 @@ These rabbit holes can be added if she remains curious after finding the Wikiped
 
 5. [ ] **Fake JSTOR abstract** — a fake academic reference for a paper titled something like *"Kotodama and Commerce: Protective Talisman Beliefs Among Edo-Period Merchant Navigators"*, Journal of Japanese Studies, 2003. Just needs a believable URL and abstract — she's unlikely to try to access the full paper.
 
+6. [ ] **Wikipedia Talk page** for `Hiro_Nakamura_(merchant)` — editors debating the article's reliability, someone questioning the Tanaka Collection provenance, another defending it, a closed thread about a proposed merge with `Hiro Nakamura (Heroes)`. Extremely convincing if she clicks the Talk tab.
+
 ---
 
 ## Session Log
@@ -130,6 +131,22 @@ These rabbit holes can be added if she remains curious after finding the Wikiped
 |------|---------------|
 | May 25 2026 | Project created. Registered wikipedia.space, set up GitHub Pages, built and deployed index.html with aged images embedded as base64. DNS pointed at GitHub Pages. |
 | May 25 2026 | Extracted full Wikipedia Vector 2022 design system live from en.wikipedia.org/wiki/Edo_period. Saved as `wikipedia-design-system.md`. Covers typography, colors, layout grid, every component. |
+| May 25 2026 | **Rev 2 — Vector 2022 fidelity rebuild.** Replaced the hand-rolled `index.html` with a faithful Vector 2022 implementation (old version kept as `index-v1.html`). Switched from aged-photo treatments to museum-quality `rev_images/` source files; cropped each into the `assets/` JPGs used by the article. Restructured the title bar (h1 → underline → tabs → siteSub), removed TOC section numbers, replaced the globe SVG with the real Wikipedia 25-year wordmark + puzzle-piece badge (`assets/wikipedia-logo.svg`). Updated the barrel canon (added 八海山 / Hakkaisan brand name and 謹醸 seal) to match the actual sake barrel. |
+
+## Image Pipeline (current)
+
+The current `index.html` uses six files in `assets/`:
+
+| Asset | Crop source | What it shows |
+|-------|-------------|---------------|
+| `assets/hiro-portrait.jpg` (630×900) | `rev_images/what hiro might have looked like.png` | Tight crop on the figure of Hiro — excludes the AI-garbled "Field Notes" handwriting. Used in infobox. |
+| `assets/coin-obverse.jpg` (900×900) | `rev_images/front of coin.png` | Tight square on the coin; excludes the museum-catalog stamp and AI sparkle. |
+| `assets/coin-reverse.jpg` (900×900) | `rev_images/back of coin.png` | Same treatment. |
+| `assets/coin-in-hand.jpg` (675×900) | `rev_images/coin in hand.png` | Portrait crop excluding the AI sparkle. |
+| `assets/sake-barrel.jpg` (520×720) | `rev_images/barrel in museum.png` | Tight crop centered on the komodaru; excludes the AI-garbled placard and framed photo caption. **Note:** the barrel in this AI-generated museum photo has slightly garbled kanji on the top band; the article text describes the *real* barrel canon (高級清酒 / 八海山 / 謹醸). |
+| `assets/wikipedia-logo.svg` | Provided by user | Real Wikipedia 25-year anniversary wordmark + puzzle-piece badge. Sized 25px tall in the header. |
+
+To regenerate any of these, look at the inline crop coordinates documented in the session transcript or use the source dimensions table above as a starting point. The `rev_images/` source files are the authoritative originals.
 
 ---
 
